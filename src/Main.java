@@ -1,15 +1,37 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        System.out.println("Главный поток запущен");
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+        Thread[] threads = new Thread[10];
+        for (int i = 0; i < 10; i++) {
+            threads[i] = new Thread(new MyTask(i + 1));
+            threads[i].start();
         }
+        for (Thread t : threads) {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                System.out.println("Главный поток прерван");
+            }
+        }
+        System.out.println("Главный поток завершен");
+    }
+}
+
+class MyTask implements Runnable {
+    private final int id;
+    public MyTask(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public void run() {
+        System.out.println("Поток " + id + " запущен");
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            System.out.println("Поток " + id + " прерван");
+        }
+        System.out.println("Поток " + id + " завершен");
     }
 }
